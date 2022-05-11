@@ -4,8 +4,9 @@ const $ = require( "jquery" )( window );
 const fs = require ( 'fs' );
 const { giphyApiKey } = require ('./config.json')
 
+const tag = "fractal"
 var urlAlreadyExists;
-const fractalFile = 'txt-arrays/fractals.txt';
+const fractalFile = 'txt-arrays/fractals_showcase.txt';
 const readFileLines = filename =>
    fs.readFileSync(filename)
    .toString('UTF8')
@@ -13,7 +14,7 @@ const readFileLines = filename =>
 
 for (let i = 0; i < 1500; i++) {
     var fractals = readFileLines(fractalFile)
-    var xhr = $.get("http://api.giphy.com/v1/gifs/random?api_key=" + giphyApiKey + "&tag=fractal");
+    var xhr = $.get("http://api.giphy.com/v1/gifs/random?api_key=" + giphyApiKey + "&tag=" + tag );
         xhr.done(function(response) {
             var giphyID = response.data.id;
             var giphyURL = 'https://media.giphy.com/media/' + giphyID + "/giphy.gif"
