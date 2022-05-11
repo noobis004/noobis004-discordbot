@@ -15,5 +15,5 @@ edit config.json to include the data you need
 now to install dependencies
  do the following in the terminal
 ```
- npm install @latest'
+ npm install @latest
 ```
