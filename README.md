@@ -6,9 +6,11 @@ edit config.json to include the data you need
 
 ```
 {
+	
     "clientId": "DISCORD_BOT_CLIENTID",
     "guildId": "DISCORD_SERVER_ID",
-   "token": "DISCORD_BOT_TOKEN"
+    "token": "DISCORD_BOT_TOKEN"
+
 }
 ```
 
