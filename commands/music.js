@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { GuildMember, interaction } = require('discord.js');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, generateDependencyReport } = require('@discordjs/voice');
 const { QueryType} = require('discord-player');
-const config = require('C:/discord test bot/config.json');
+const config = require('../config.json');
 const ytdb = require('ytdl-core');
 const ytdl = require('ytdl-core');
 
