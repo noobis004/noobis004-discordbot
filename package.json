@@ -17,6 +17,7 @@
     "discord-player": "^5.2.2",
     "discord.js": "^13.6.0",
     "ffmpeg-static": "^4.4.1",
+    "git": "^0.1.5",
     "jquery": "^3.6.0",
     "jsdom": "^19.0.0",
     "libsodium-wrappers": "^0.7.10",
