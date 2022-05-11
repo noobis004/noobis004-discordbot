@@ -23,8 +23,6 @@ for (let i = 0; i < 1500; i++) {
             for(let n = 0; n < fractals.length; n++) {
                 if (giphyURL === fractals[n]) {
                     urlAlreadyExists = true;
-                } else if (giphyURL = "https://media.giphy.com/media/undefined/giphy.gif") {
-                    urlAlreadyExists = true;
                 }
             }
             if (urlAlreadyExists) {
