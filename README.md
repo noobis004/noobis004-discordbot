@@ -12,7 +12,7 @@ Edit config.json to include the data you need.
     "clientId": "DISCORD_BOT_CLIENTID",
     "guildId": "DISCORD_SERVER_ID",
     "token": "DISCORD_BOT_TOKEN",
-   "giphyApiKey": "GIPHY_API_KEY"
+    "giphyApiKey": "GIPHY_API_KEY"
 
 }
 ```
