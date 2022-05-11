@@ -1,8 +1,8 @@
-setup:
+***Setup:***
 
-create file in same folder as index.js called config.json
+Create file in same folder as index.js called config.json.
 
-edit config.json to include the data you need
+Edit config.json to include the data you need.
 
 ```
 {
@@ -12,8 +12,9 @@ edit config.json to include the data you need
 }
 ```
 
-now to install dependencies
- do the following in the terminal
+Now to install dependencies do the following in the terminal.
 ```
  npm install @latest
 ```
+
+once you have done both of these
