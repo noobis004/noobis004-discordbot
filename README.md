@@ -17,4 +17,4 @@ Now to install dependencies do the following in the terminal.
  npm install @latest
 ```
 
-once you have done both of these
+Once you have done both of these
