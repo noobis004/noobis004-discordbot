@@ -4,7 +4,6 @@ const { joinVoiceChannel, createAudioPlayer, createAudioResource, generateDepend
 const { QueryType} = require('discord-player');
 const config = require('../config.json');
 const ytdb = require('ytdl-core');
-const ytdl = require('ytdl-core');
 
 
 
@@ -31,7 +30,7 @@ module.exports = {
                 });
         }
 
-        const songinfo = await ytdl.getInfo(url )
+        const songinfo = await ytdb.getInfo(url);
         const song = {
             title: songinfo.videoDetails.title,
         };
