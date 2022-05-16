@@ -35,6 +35,7 @@ module.exports = {
             title: songinfo.videoDetails.title,
             length: songinfo.videoDetails.lengthSeconds,
         };
+        console.log(song.length);
        
         const stream = ytdb(url, {filter: 'audioonly'});
         const audioplayer = createAudioPlayer();
