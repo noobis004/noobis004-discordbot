@@ -33,6 +33,7 @@ module.exports = {
         const songinfo = await ytdb.getInfo(url);
         const song = {
             title: songinfo.videoDetails.title,
+            length: songinfo.videoDetails.lengthSeconds,
         };
        
         const stream = ytdb(url, {filter: 'audioonly'});
