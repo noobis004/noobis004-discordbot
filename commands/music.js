@@ -113,7 +113,6 @@ module.exports = {
 };
 
 const song_Player = async (guild, song, audioplayer, interaction) => {
-    const song_queue = queue.get(guild.id);
 
     if (!song) {
         const connection = joinVoiceChannel({
@@ -129,9 +128,19 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
     const stream = ytdb(song.url, {filter: 'audioonly'});
     const resource = createAudioResource(stream, { inputType: StreamType.Arbitrary });
     audioplayer.play(resource);
-    audioplayer.on(AudioPlayerStatus.Idle, () => {
-        song_queue.songs.shift();
-        song_Player(guild, song_queue.songs[0], audioplayer, interaction);
+    audioplayer.on('error', error => {
+        console.error(`Error: ${error.message}`);
+        next_song(guild, audioplayer, interaction);
     });
-    await song_queue.text_channel.send(`🎶 Now playing **${song.title}**`);
+    audioplayer.on(AudioPlayerStatus.Idle, () => {
+        next_song(guild, audioplayer, interaction);
+    });
+    await interaction.reply(`🎶 Now playing **${song.title}**`);
+}
+
+const next_song = async (guild, audioplayer, interaction) => {
+    const song_queue = queue.get(guild.id);
+
+    song_queue.songs.shift();
+    song_Player(guild, song_queue.songs[0], audioplayer, interaction);
 }
