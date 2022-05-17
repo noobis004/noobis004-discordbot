@@ -5,7 +5,8 @@ const config = require('./config.json');
 const { Player } = require('discord-player')
 
 
-const client = new Client()
+const client = new Client();
+const music_channels = new Map();
 
 client.commands = new Discord.Collection();
 const commandfiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -25,8 +26,6 @@ client.once('ready', () => {
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;
 
-    
-
 	const command = client.commands.get(interaction.commandName);
 
     if (!command) return;
@@ -34,9 +33,9 @@ client.on('interactionCreate', async interaction => {
     try {
         if (interaction.commandName == 'music') {
             if (interaction.options.getSubcommand() === "play") {
-                command.play(interaction)
+                command.play(interaction);
             } else if (interaction.options.getSubcommand() === "stop") {
-                command.stop(interaction)
+                command.stop(interaction);
             }
         }else {
             command.execute(interaction, client);
