@@ -60,7 +60,7 @@ client.on('interactionCreate', async interaction => {
                 music_channels.set(interaction.guild.id, interaction.channel.id);
                 const obj = Object.fromEntries(music_channels);
                 const data = JSON.stringify(obj);
-                fs.writeFile('/serverid.json', data,  err => {
+                fs.writeFile('./serverid.json', data,  err => {
                     if (err) {
                         console.error(err);
                     }
