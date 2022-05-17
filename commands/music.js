@@ -31,8 +31,8 @@ const invc = async (interaction) => {
 
 const showqueue = async (interaction) => {
     invc(interaction);
-    const song_queue = queue(interaction.guild.id)
-    var finalsongnames = '';
+    const song_queue = queue.get(interaction.guild.id)
+    var finalsongnames = '**Current queue**';
     
     if (!song_queue) {
         return void interaction.reply({
@@ -40,16 +40,15 @@ const showqueue = async (interaction) => {
             ephemeral: true,
         });
     } else {
-        const songnames = song_queue.songs.title;
+        const songnames = song_queue.songs;
+        
         for (let i = 0; i < songnames.length; i++) {
-            finalsongnames = finalsongnames + songnames[i] + '\n';
+            finalsongnames = finalsongnames + songnames[i].title + '\n';
         }
         interaction.reply({
             content: finalsongnames,
         });
     }
-
-    
 }
 
 const loop = async (interaction) => {
@@ -57,28 +56,21 @@ const loop = async (interaction) => {
 
     if (!loop) {
         looping = true;
+        interaction.reply({
+            content: 'Looping is now on',
+        });
+        return;
     } else {
         looping = false
+        interaction.reply({
+            content: 'Looping is now off',
+        });
+        return;
     }
 }
 
 const skip = async (interaction) =>  {
-    if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
-        return void interaction.reply({
-        content: 'You are not in a voice channel!',
-        ephemeral: true,
-        });
-    }
-    
-    if (
-        interaction.guild.me.voice.channelId &&
-        interaction.member.voice.channelId !== interaction.guild.me.voice.channelId
-    ) {
-        return void interaction.reply({
-        content: 'You are not in my voice channel!',
-        ephemeral: true,
-        });
-    }
+    invc(interaction);
 
     const server_queue = queue.get(interaction.guild.id)
     
