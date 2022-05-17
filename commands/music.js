@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { GuildMember } = require('discord.js');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, StreamType } = require('@discordjs/voice');
 const ytdb = require('ytdl-core');
+const play = require('play-dl');
 global.AbortController = require('node-abort-controller').AbortController;
 
 const queue = new Map();
@@ -128,8 +129,10 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
         return;
     }
     console.log(song.url);
-    const stream = ytdb(song.url, {filter: 'audioonly'});
-    const resource = createAudioResource(stream, { inputType: StreamType.Arbitrary });
+    let stream = await play.stream(song.url); 
+    let resource = createAudioResource(stream.stream, {
+        inputType: stream.type
+    })
     audioplayer.play(resource);
     audioplayer.on('error', error => {
         console.error(`Error: ${error.message}`);
