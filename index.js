@@ -45,7 +45,7 @@ client.on('interactionCreate', async interaction => {
                 });
             } else if (interaction.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
                 interaction.reply({
-                    content: 'To do music commands you need to specify a channel to run them. \nDo **/setmusicchannel in the desired channel.',
+                    content: 'To do music commands you need to specify a channel to run them. \nDo **/setmusicchannel** in the desired channel.',
                     ephemeral: true
                 })
             } else {

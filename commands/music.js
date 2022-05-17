@@ -94,19 +94,7 @@ module.exports = {
                 content: 'invalid url',
                 ephemeral: true,
             });
-        }
-
-
-        
-        
-
-        
-        isplaying = true;
-        interaction.reply(`Started playing ${song.title}`);
-
-        const subscription = connection.subscribe(audioplayer);
-
-        
+        }  
     },
     async stop(interaction) {
         const voiceChannel = interaction.member.voice.channel;
@@ -138,7 +126,7 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
         return;
     }
     console.log(song.url);
-    const stream = ytdb(url, {filter: 'audioonly'});
+    const stream = ytdb(song.url, {filter: 'audioonly'});
     const resource = createAudioResource(stream, { inputType: StreamType.Arbitrary });
     audioplayer.play(resource);
     audioplayer.on(AudioPlayerStatus.Idle, () => {
