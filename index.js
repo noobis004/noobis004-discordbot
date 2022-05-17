@@ -58,8 +58,9 @@ client.on('interactionCreate', async interaction => {
         } else if (interaction.commandName == 'setmusicchannel') {
             if (interaction.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
                 music_channels.set(interaction.guild.id, interaction.channel.id);
-
-                fs.writeFile('/config.json', data, { flag: 'a+' }, err => {
+                const obj = Object.fromEntries(music_channels);
+                const data = JSON.stringify(obj);
+                fs.writeFile('/serverid.json', data,  err => {
                     if (err) {
                         console.error(err);
                     }
@@ -84,7 +85,6 @@ client.on('interactionCreate', async interaction => {
     }
     
 });
-
 
 
 client.login(config.token);
