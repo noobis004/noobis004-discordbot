@@ -8,7 +8,32 @@ global.AbortController = require('node-abort-controller').AbortController;
 const queue = new Map();
 var audioplayer;
 var firstsong = true;
+var loop = false;
 
+const loop = async (interaction) => {
+    if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
+        return void interaction.reply({
+        content: 'You are not in a voice channel!',
+        ephemeral: true,
+        });
+    }
+    
+    if (
+        interaction.guild.me.voice.channelId &&
+        interaction.member.voice.channelId !== interaction.guild.me.voice.channelId
+    ) {
+        return void interaction.reply({
+        content: 'You are not in my voice channel!',
+        ephemeral: true,
+        });
+    }
+
+    if (!loop) {
+        loop = true;
+    } else {
+        loop = false
+    }
+}
 
 const skip = async (interaction) =>  {
     if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
@@ -69,6 +94,7 @@ const stop = async (interaction) => {
         adapterCreator: interaction.guild.voiceAdapterCreator,
     });
     
+    firstsong = true;
     connection.destroy();
     queue.delete(interaction.guild.id);
     interaction.reply('Music stopped!');
@@ -204,8 +230,16 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
 const next_song = async (guild, audioplayer, interaction) => {
     const song_queue = queue.get(guild.id);
 
-    song_queue.songs.shift();
-    song_Player(guild, song_queue.songs[0], audioplayer, interaction);
+    if (loop) {
+        const loopsong = song_queue.songs.shift();
+        song_queue.songs.push(loopsong);
+        song_Player(guild, song_queue.songs[0], audioplayer, interaction);
+    } else {
+        song_queue.songs.shift();
+        song_Player(guild, song_queue.songs[0], audioplayer, interaction);
+    }
+
+    
 }
 
 
