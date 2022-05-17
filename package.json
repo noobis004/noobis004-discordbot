@@ -24,6 +24,7 @@
     "mime": "^3.0.0",
     "node": "^15.14.0",
     "node-abort-controller": "^3.0.1",
+    "play-dl": "^1.9.4",
     "youtube-dl-exec": "^2.0.12",
     "ytdl-core": "^4.11.0"
   },
