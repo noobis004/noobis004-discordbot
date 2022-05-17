@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { Permissions } = require('discord.js')
 
 
 module.exports = {
@@ -14,7 +15,7 @@ module.exports = {
                 .setDescription('The role to give to the member')
                 .setRequired(true)),
     async execute(interaction) {
-        if (interaction.user.id === '286143081735258113') {
+        if (interaction.me.Permissions.has(Permissions.FLAGS.MANAGE_ROLES)) {
             const member = interaction.options.getMember('member');
             const role = interaction.options.getRole('role');
             member.roles.add(role);
