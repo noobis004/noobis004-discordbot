@@ -52,6 +52,8 @@ client.on('interactionCreate', async interaction => {
                     command.play(interaction);
                 } else if (interaction.options.getSubcommand() === "stop") {
                     command.stop(interaction);
+                } else if (interaction.options.getSubcommand() === "skip") {
+                    command.skip(interaction)
                 }
             } else if (music_channels.has(interaction.guild.id)) {
                 interaction.reply({
