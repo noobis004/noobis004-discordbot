@@ -2,23 +2,23 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const Client = require('./client/Client.js');
 const config = require('./config.json');
-const { Player } = require('discord-player')
-
+const { Player } = require('discord-player');
+const { json } = require('stream/consumers');
 
 
 const client = new Client();
-const music_channels = new Map();
 
-fs.readFile('./serverid.json', 'utf-8', (err, data) => {
-    if (err) {
-        throw err;
-    }
+const readFileLines = filename =>
+fs.readFileSync(filename)
+.toString('UTF8');
 
-    // parse JSON object
-    const ids = JSON.parse(data.toString());
-
-    music_channels = Object.entries(ids)
-});
+var ids;
+var music_channels = new Map();
+const data = readFileLines('./musicChannelId.json')
+if (data) {
+    ids = JSON.parse(data.toString());
+    music_channels = new Map(Object.entries(ids));
+}
 
 
 
