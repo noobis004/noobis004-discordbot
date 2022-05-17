@@ -64,7 +64,7 @@ client.on('interactionCreate', async interaction => {
                 })
             } else {
                 interaction.reply({
-                    content:'To do music commands you need a specific channel to run them in. \nAsk the server owner to set it up.',
+                    content:'The music commands need a specific channel to run them in. \nAsk the server owner to set it up.',
                     ephemeral: true,
                 })
             }
