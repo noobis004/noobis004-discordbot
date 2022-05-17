@@ -3,7 +3,6 @@ const Discord = require('discord.js');
 const Client = require('./client/Client.js');
 const config = require('./config.json');
 const { Player } = require('discord-player');
-const { json } = require('stream/consumers');
 global.AbortController = require('node-abort-controller').AbortController;
 
 
@@ -46,15 +45,9 @@ client.on('interactionCreate', async interaction => {
     if (!command) return;
     
     try {
-        if (interaction.commandName == 'music') {
+        if (interaction.commandName == 'play' || interaction.commandName == 'stop' ||interaction.commandName == 'skip') {
             if (music_channels.get(interaction.guild.id) === interaction.channel.id) {
-                if (interaction.options.getSubcommand() === "play") {
-                    command.play(interaction);
-                } else if (interaction.options.getSubcommand() === "stop") {
-                    command.stop(interaction);
-                } else if (interaction.options.getSubcommand() === "skip") {
-                    command.skip(interaction)
-                }
+                command.execute(interaction);
             } else if (music_channels.has(interaction.guild.id)) {
                 interaction.reply({
                     content: 'Music commands needs to be sent in <#' + music_channels.get(interaction.guild.id) +'>',

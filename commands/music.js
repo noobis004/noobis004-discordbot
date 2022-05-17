@@ -12,22 +12,13 @@ var firstsong = true;
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('music')
+		.setName('play')
 		.setDescription('Joins the voice channel you are currently in!')
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('play')
-                .setDescription('Plays music from a youtube link')
-                .addStringOption(option => option.setName('song').setDescription('The song you wanna play').setRequired(true)))
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('stop')
-                .setDescription('Stops the music!'))
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('skip')
-                .setDescription('Skips the current song!')),
-    async play(interaction) {
+        .addStringOption(option => 
+            option.setName('song')
+            .setDescription('The song you wanna play')
+            .setRequired(true)),
+    async execute(interaction) {
         const voiceChannel = interaction.member.voice.channel;
 
         if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
@@ -104,70 +95,9 @@ module.exports = {
             });
         }  
     },
-    async stop(interaction) {
-        if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
-            return void interaction.reply({
-            content: 'You are not in a voice channel!',
-            ephemeral: true,
-            });
-        }
-        
-        if (
-            interaction.guild.me.voice.channelId &&
-            interaction.member.voice.channelId !== interaction.guild.me.voice.channelId
-        ) {
-            return void interaction.reply({
-            content: 'You are not in my voice channel!',
-            ephemeral: true,
-            });
-        }
-
-        const voiceChannel = interaction.member.voice.channel;
-        const connection = joinVoiceChannel({
-            channelId: voiceChannel.id,
-            guildId: interaction.guild.id,
-            adapterCreator: interaction.guild.voiceAdapterCreator,
-        });
-        
-        connection.destroy();
-        queue.delete(interaction.guild.id);
-        interaction.reply('Music stopped!');
-        return;
-    },
-    async skip(interaction) {
-        if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
-            return void interaction.reply({
-            content: 'You are not in a voice channel!',
-            ephemeral: true,
-            });
-        }
-        
-        if (
-            interaction.guild.me.voice.channelId &&
-            interaction.member.voice.channelId !== interaction.guild.me.voice.channelId
-        ) {
-            return void interaction.reply({
-            content: 'You are not in my voice channel!',
-            ephemeral: true,
-            });
-        }
-
-        const server_queue = queue.get(interaction.guild.id)
-        
-        if (!server_queue) {
-            return void interaction.reply({
-                content: "There are currently no songs playing!",
-                ephemeral: true,
-            });
-        } else {
-            const song = server_queue.songs[0];
-            next_song(interaction.guild, audioplayer, interaction);
-            interaction.reply({
-                content: `:fast_forward:Skipped ${song.title}`
-            })
-        }
-    }
 };
+
+
 
 
 const song_Player = async (guild, song, audioplayer, interaction) => {
@@ -211,3 +141,70 @@ const next_song = async (guild, audioplayer, interaction) => {
     song_queue.songs.shift();
     song_Player(guild, song_queue.songs[0], audioplayer, interaction);
 }
+
+const skip = async (interaction) =>  {
+    if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
+        return void interaction.reply({
+        content: 'You are not in a voice channel!',
+        ephemeral: true,
+        });
+    }
+    
+    if (
+        interaction.guild.me.voice.channelId &&
+        interaction.member.voice.channelId !== interaction.guild.me.voice.channelId
+    ) {
+        return void interaction.reply({
+        content: 'You are not in my voice channel!',
+        ephemeral: true,
+        });
+    }
+
+    const server_queue = queue.get(interaction.guild.id)
+    
+    if (!server_queue) {
+        return void interaction.reply({
+            content: "There are currently no songs playing!",
+            ephemeral: true,
+        });
+    } else {
+        const song = server_queue.songs[0];
+        next_song(interaction.guild, audioplayer, interaction);
+        interaction.reply({
+            content: `:fast_forward:Skipped ${song.title}`
+        })
+    }
+}
+
+const stop = async (interaction) => {
+    if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
+        return void interaction.reply({
+        content: 'You are not in a voice channel!',
+        ephemeral: true,
+        });
+    }
+    
+    if (
+        interaction.guild.me.voice.channelId &&
+        interaction.member.voice.channelId !== interaction.guild.me.voice.channelId
+    ) {
+        return void interaction.reply({
+        content: 'You are not in my voice channel!',
+        ephemeral: true,
+        });
+    }
+
+    const voiceChannel = interaction.member.voice.channel;
+    const connection = joinVoiceChannel({
+        channelId: voiceChannel.id,
+        guildId: interaction.guild.id,
+        adapterCreator: interaction.guild.voiceAdapterCreator,
+    });
+    
+    connection.destroy();
+    queue.delete(interaction.guild.id);
+    interaction.reply('Music stopped!');
+    return;
+}
+
+module.exports = { skip, stop }
