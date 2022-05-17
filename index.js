@@ -36,7 +36,7 @@ client.on('interactionCreate', async interaction => {
             if (interaction.options.getSubcommand() === "play") {
                 command.play(interaction)
             } else if (interaction.options.getSubcommand() === "stop") {
-                command.stop(interaction, player)
+                command.stop(interaction)
             }
         }else {
             command.execute(interaction, client);
@@ -45,6 +45,7 @@ client.on('interactionCreate', async interaction => {
         console.error(error);
         interaction.followUp({
             content: 'There was an error trying to execute that command!',
+            ephemeral: true,
         });
     }
     
