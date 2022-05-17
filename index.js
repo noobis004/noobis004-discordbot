@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const Client = require('./client/Client.js');
 const config = require('./config.json');
 const { Player } = require('discord-player');
+const { lookup } = require('dns');
 global.AbortController = require('node-abort-controller').AbortController;
 
 
@@ -45,7 +46,7 @@ client.on('interactionCreate', async interaction => {
     if (!command) return;
     
     try {
-        if (interaction.commandName == 'play' || interaction.commandName == 'stop' ||interaction.commandName == 'skip') {
+        if (interaction.commandName == 'play' || interaction.commandName == 'stop' || interaction.commandName == 'skip' || interaction.commandName == "loop" || interaction.commandName == "showqueue") {
             if (music_channels.get(interaction.guild.id) === interaction.channel.id) {
                 command.execute(interaction);
             } else if (music_channels.has(interaction.guild.id)) {

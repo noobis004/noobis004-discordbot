@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { GuildMember } = require('discord.js');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, StreamType } = require('@discordjs/voice');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
 const ytdb = require('ytdl-core');
 const play = require('play-dl');
 global.AbortController = require('node-abort-controller').AbortController;
@@ -8,9 +8,9 @@ global.AbortController = require('node-abort-controller').AbortController;
 const queue = new Map();
 var audioplayer;
 var firstsong = true;
-var loop = false;
+var looping = false;
 
-const loop = async (interaction) => {
+const invc = async (interaction) => {
     if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
         return void interaction.reply({
         content: 'You are not in a voice channel!',
@@ -27,11 +27,38 @@ const loop = async (interaction) => {
         ephemeral: true,
         });
     }
+}
+
+const showqueue = async (interaction) => {
+    invc(interaction);
+    const song_queue = queue(interaction.guild.id)
+    var finalsongnames = '';
+    
+    if (!song_queue) {
+        return void interaction.reply({
+            content: 'There are currently no songs playing',
+            ephemeral: true,
+        });
+    } else {
+        const songnames = song_queue.songs.title;
+        for (let i = 0; i < songnames.length; i++) {
+            finalsongnames = finalsongnames + songnames[i] + '\n';
+        }
+        interaction.reply({
+            content: finalsongnames,
+        });
+    }
+
+    
+}
+
+const loop = async (interaction) => {
+    invc(interaction);
 
     if (!loop) {
-        loop = true;
+        looping = true;
     } else {
-        loop = false
+        looping = false
     }
 }
 
@@ -70,22 +97,7 @@ const skip = async (interaction) =>  {
 }
 
 const stop = async (interaction) => {
-    if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
-        return void interaction.reply({
-        content: 'You are not in a voice channel!',
-        ephemeral: true,
-        });
-    }
-    
-    if (
-        interaction.guild.me.voice.channelId &&
-        interaction.member.voice.channelId !== interaction.guild.me.voice.channelId
-    ) {
-        return void interaction.reply({
-        content: 'You are not in my voice channel!',
-        ephemeral: true,
-        });
-    }
+    invc(interaction);
 
     const voiceChannel = interaction.member.voice.channel;
     const connection = joinVoiceChannel({
@@ -112,23 +124,7 @@ module.exports = {
             .setRequired(true)),
     async execute(interaction) {
         const voiceChannel = interaction.member.voice.channel;
-
-        if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
-            return void interaction.reply({
-            content: 'You are not in a voice channel!',
-            ephemeral: true,
-            });
-        }
-        
-        if (
-            interaction.guild.me.voice.channelId &&
-            interaction.member.voice.channelId !== interaction.guild.me.voice.channelId
-        ) {
-            return void interaction.reply({
-            content: 'You are not in my voice channel!',
-            ephemeral: true,
-            });
-        }
+        invc(interaction);
         
         const server_queue = queue.get(interaction.guild.id);
         let song = {};
@@ -186,7 +182,7 @@ module.exports = {
                 ephemeral: true,
             });
         }  
-    },skip ,stop
+    },skip, stop, loop, showqueue
 };
 
 
@@ -230,7 +226,7 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
 const next_song = async (guild, audioplayer, interaction) => {
     const song_queue = queue.get(guild.id);
 
-    if (loop) {
+    if (looping) {
         const loopsong = song_queue.songs.shift();
         song_queue.songs.push(loopsong);
         song_Player(guild, song_queue.songs[0], audioplayer, interaction);
