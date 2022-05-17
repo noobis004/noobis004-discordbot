@@ -8,6 +8,7 @@ const { Player } = require('discord-player')
 const client = new Client();
 const music_channels = new Map();
 
+
 client.commands = new Discord.Collection();
 const commandfiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -57,6 +58,12 @@ client.on('interactionCreate', async interaction => {
         } else if (interaction.commandName == 'setmusicchannel') {
             if (interaction.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
                 music_channels.set(interaction.guild.id, interaction.channel.id);
+
+                fs.writeFile('/config.json', data, { flag: 'a+' }, err => {
+                    if (err) {
+                        console.error(err);
+                    }
+                });
                 interaction.reply({
                     content: 'Channel set to music channel',
                 });
