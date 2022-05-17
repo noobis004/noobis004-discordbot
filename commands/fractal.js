@@ -1,5 +1,5 @@
-const { SlashCommandBuilder, channelMention, embedLength } = require('@discordjs/builders');
-const { MessageEmbed,  Client, Message } = require('discord.js');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { MessageEmbed } = require('discord.js');
 const fs = require("fs");
 
 
