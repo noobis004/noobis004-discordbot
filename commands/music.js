@@ -72,6 +72,7 @@ module.exports = {
 
                     queue_constructor.connection = connection;
                     song_Player(interaction.guild, queue_constructor.songs[0], audioplayer, interaction);
+                    interaction.reply('👍');
                 }
                 catch (err) {
                     queue.delete(interaction.guild.id);
@@ -113,10 +114,11 @@ module.exports = {
 };
 
 const song_Player = async (guild, song, audioplayer, interaction) => {
+    const song_queue = queue.get(guild.id);
 
     if (!song) {
         const connection = joinVoiceChannel({
-            channelId: voiceChannel.id,
+            channelId: interaction.member.voice.channel.id,
             guildId: interaction.guild.id,
             adapterCreator: interaction.guild.voiceAdapterCreator,
         });
@@ -130,12 +132,14 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
     audioplayer.play(resource);
     audioplayer.on('error', error => {
         console.error(`Error: ${error.message}`);
-        next_song(guild, audioplayer, interaction);
+        song_queue.songs.shift();
+        song_Player(guild, song_queue.songs[0], audioplayer, interaction);
     });
     audioplayer.on(AudioPlayerStatus.Idle, () => {
-        next_song(guild, audioplayer, interaction);
+        song_queue.songs.shift();
+        song_Player(guild, song_queue.songs[0], audioplayer, interaction);
     });
-    await interaction.reply(`🎶 Now playing **${song.title}**`);
+    await song_queue.text_channel.send(`🎶 Now playing **${song.title}**`);
 }
 
 const next_song = async (guild, audioplayer, interaction) => {
