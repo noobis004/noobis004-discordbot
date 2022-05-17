@@ -5,8 +5,21 @@ const config = require('./config.json');
 const { Player } = require('discord-player')
 
 
+
 const client = new Client();
 const music_channels = new Map();
+
+fs.readFile('./serverid.json', 'utf-8', (err, data) => {
+    if (err) {
+        throw err;
+    }
+
+    // parse JSON object
+    const ids = JSON.parse(data.toString());
+
+    music_channels = Object.entries(ids)
+});
+
 
 
 client.commands = new Discord.Collection();
