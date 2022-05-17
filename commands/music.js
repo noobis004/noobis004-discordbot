@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { GuildMember } = require('discord.js');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, StreamType } = require('@discordjs/voice');
 const ytdb = require('ytdl-core');
+import { raw as ytdl } from 'youtube-dl-exec';
 
 const queue = new Map();
 
@@ -127,8 +128,7 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
         return;
     }
     console.log(song.url);
-    const stream = ytdb(song.url, {filter: 'audioonly'});
-    const resource = createAudioResource(stream, { inputType: StreamType.Arbitrary });
+    createAudioResource(song.url)
     audioplayer.play(resource);
     audioplayer.on('error', error => {
         console.error(`Error: ${error.message}`);
@@ -142,9 +142,34 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
     await song_queue.text_channel.send(`🎶 Now playing **${song.title}**`);
 }
 
-const next_song = async (guild, audioplayer, interaction) => {
-    const song_queue = queue.get(guild.id);
-
-    song_queue.songs.shift();
-    song_Player(guild, song_queue.songs[0], audioplayer, interaction);
+function createAudioResource(url) {
+    return new Promise((resolve, reject) => {
+        const process = ytdl(
+            url,
+            {
+                o: '-',
+                q: '',
+                f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
+                r: '100K',
+            },
+            { stdio: ['ignore', 'pipe', 'ignore'] },
+        );
+        if (!process.stdout) {
+            reject(new Error('No stdout'));
+            return;
+        }
+        const stream = process.stdout;
+        const onError = error => {
+            if (!process.killed) process.kill();
+            stream.resume();
+            reject(error);
+        };
+        process
+            .once('spawn', () => {
+                demuxProbe(stream)
+                    .then(probe => resolve(createAudioResource(probe.stream, { metadata: this, inputType: probe.type })))
+                    .catch(onError);
+            })
+            .catch(onError);
+    });
 }

@@ -4,6 +4,7 @@ const Client = require('./client/Client.js');
 const config = require('./config.json');
 const { Player } = require('discord-player');
 const { json } = require('stream/consumers');
+global.AbortController = require('node-abort-controller').AbortController;
 
 
 const client = new Client();
