@@ -33,6 +33,7 @@ const showqueue = async (interaction) => {
     invc(interaction);
     const song_queue = queue.get(interaction.guild.id)
     var finalsongnames = '**Current queue**:\n';
+    var finalqueuereply = '**Currently playing**:\n'
     
     if (!song_queue) {
         return void interaction.reply({
@@ -41,12 +42,13 @@ const showqueue = async (interaction) => {
         });
     } else {
         const songnames = song_queue.songs;
-        
-        for (let i = 0; i < songnames.length; i++) {
+        finalqueuereply = finalqueuereply + songnames[0].title + '\n'
+
+        for (let i = 1; i < songnames.length; i++) {
             finalsongnames = finalsongnames + songnames[i].title + '\n';
         }
         interaction.reply({
-            content: finalsongnames,
+            content: finalqueuereply + finalsongnames,
         });
     }
 }
@@ -229,7 +231,3 @@ const next_song = async (guild, audioplayer, interaction) => {
 
     
 }
-
-
-
-
