@@ -32,7 +32,7 @@ const invc = async (interaction) => {
 const showqueue = async (interaction) => {
     invc(interaction);
     const song_queue = queue.get(interaction.guild.id)
-    var finalsongnames = '**Current queue**';
+    var finalsongnames = '**Current queue**:\n';
     
     if (!song_queue) {
         return void interaction.reply({
