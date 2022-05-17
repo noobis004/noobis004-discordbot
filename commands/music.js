@@ -123,7 +123,6 @@ module.exports = {
         }
 
         const voiceChannel = interaction.member.voice.channel;
-
         const connection = joinVoiceChannel({
             channelId: voiceChannel.id,
             guildId: interaction.guild.id,
@@ -155,7 +154,6 @@ module.exports = {
 
         const server_queue = queue.get(interaction.guild.id)
         
-
         if (!server_queue) {
             return void interaction.reply({
                 content: "There are currently no songs playing!",
@@ -170,6 +168,7 @@ module.exports = {
         }
     }
 };
+
 
 const song_Player = async (guild, song, audioplayer, interaction) => {
     const song_queue = queue.get(guild.id);
