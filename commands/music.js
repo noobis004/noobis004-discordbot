@@ -35,7 +35,6 @@ module.exports = {
             title: songinfo.videoDetails.title,
             length: songinfo.videoDetails.lengthSeconds,
         };
-        console.log(song.length);
        
         const stream = ytdb(url, {filter: 'audioonly'});
         const audioplayer = createAudioPlayer();
@@ -66,7 +65,14 @@ module.exports = {
         audioplayer.play(resource);
         interaction.reply(`Started playing ${song.title}`);
 
+        const songStandofLength = song.length + 2
+        const songlength = songStandofLength + '_000'
         const subscription = connection.subscribe(audioplayer);
+        console.log(songlength);
+
+        if(subscription) {
+            setTimeout(() => subscription.unsubscribe(), songlength);
+        }
 
     },
     async stop(interaction, player) {
