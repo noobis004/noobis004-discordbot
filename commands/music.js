@@ -11,7 +11,7 @@ var firstsong = true;
 var looping = false;
 
 
-const invc = async (interaction) => {
+const inVC = async (interaction) => {
     if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
         return void interaction.reply({
         content: 'You are not in a voice channel!',
@@ -31,7 +31,7 @@ const invc = async (interaction) => {
 }
 
 const showqueue = async (interaction) => {
-    invc(interaction);
+    inVC(interaction);
     const song_queue = queue.get(interaction.guild.id)
     var finalsongnames = '**Current queue**:\n';
     var finalqueuereply = '**Currently playing**:\n'
@@ -59,7 +59,7 @@ const showqueue = async (interaction) => {
 }
 
 const loop = async (interaction) => {
-    invc(interaction);
+    inVC(interaction);
     const server_queue = queue.get(interaction.guild.id)
 
     if (!server_queue) {
@@ -85,7 +85,7 @@ const loop = async (interaction) => {
 }
 
 const skip = async (interaction) =>  {
-    invc(interaction);
+    inVC(interaction);
 
     const server_queue = queue.get(interaction.guild.id)
 
@@ -104,7 +104,7 @@ const skip = async (interaction) =>  {
 }
 
 const stop = async (interaction) => {
-    invc(interaction);
+    inVC(interaction);
     const server_queue = queue.get(interaction.guild.id);
     
     if(!server_queue) {
@@ -139,7 +139,7 @@ module.exports = {
             .setRequired(true)),
     async execute(interaction) {
         const voiceChannel = interaction.member.voice.channel;
-        invc(interaction);
+        inVC(interaction);
         
         const server_queue = queue.get(interaction.guild.id);
         let song = {};
