@@ -222,7 +222,6 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
         inputType: stream.type
     })
     audioplayer.play(resource); 
-
     audioplayer.on('error', error => {
         console.error(`Error: ${error.message}`);
         next_song(guild, audioplayer, interaction);
