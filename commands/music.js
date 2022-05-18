@@ -232,9 +232,9 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
     });
     if (firstsong) {
         firstsong = false;
-        await interaction.reply(`🎶 Now playing **${song.title}**`)
+        await interaction.reply(`🎶 Now playing **${song.title}**\n${song.url}`)
     } else {
-        await song_queue.text_channel.send(`🎶 Now playing **${song.title}**`);
+        await song_queue.text_channel.send(`🎶 Now playing **${song.title}**\n${song.url}`);
     }
 }
 
@@ -249,6 +249,4 @@ const next_song = async (guild, audioplayer, interaction) => {
         song_queue.songs.shift();
         song_Player(guild, song_queue.songs[0], audioplayer, interaction);
     }
-
-    
 }
