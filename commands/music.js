@@ -10,6 +10,7 @@ var audioplayer;
 var firstsong = true;
 var looping = false;
 
+
 const invc = async (interaction) => {
     if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
         return void interaction.reply({
@@ -87,7 +88,7 @@ const skip = async (interaction) =>  {
     invc(interaction);
 
     const server_queue = queue.get(interaction.guild.id)
-    
+
     if (!server_queue) {
         return void interaction.reply({
             content: "There are currently no songs playing!",
@@ -212,7 +213,8 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
         connection.destroy();
         queue.delete(guild.id);
         firstsong = true;
-        return;
+        await song_queue.text_channel.send('Queue is empty leaving!');
+        return 
     }
     console.log(song.url);
     let stream = await play.stream(song.url); 
