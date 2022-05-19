@@ -13,7 +13,7 @@ var looping = false;
 
 const inVC = async (interaction) => {
     if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
-        return void interaction.reply({
+        return void interaction.editReply({
         content: 'You are not in a voice channel!',
         ephemeral: true,
         });
@@ -23,7 +23,7 @@ const inVC = async (interaction) => {
         interaction.guild.me.voice.channelId &&
         interaction.member.voice.channelId !== interaction.guild.me.voice.channelId
     ) {
-        return void interaction.reply({
+        return void interaction.editReply({
         content: 'You are not in my voice channel!',
         ephemeral: true,
         });
@@ -33,16 +33,16 @@ const inVC = async (interaction) => {
 const showqueue = async (interaction) => {
     const song_queue = queue.get(interaction.guild.id)
     var finalsongnames = '**Current queue**:\n';
-    var finalqueuereply = '**Currently playing**:\n'
+    var finalqueueeditReply = '**Currently playing**:\n'
     
     if (!song_queue) {
-        return void interaction.reply({
+        return void interaction.editReply({
             content: 'There are currently no songs playing',
             ephemeral: true,
         });
     } else {
         const songnames = song_queue.songs;
-        finalqueuereply = finalqueuereply + songnames[0].title + '\n'
+        finalqueueeditReply = finalqueueeditReply + songnames[0].title + '\n'
 
         for (let i = 1; i < songnames.length; i++) {
             finalsongnames = finalsongnames + songnames[i].title + '\n';
@@ -51,8 +51,8 @@ const showqueue = async (interaction) => {
             finalsongnames = finalsongnames + 'loop is on'
         }
        
-        interaction.reply({
-            content: finalqueuereply + finalsongnames,
+        interaction.editReply({
+            content: finalqueueeditReply + finalsongnames,
         });
     }
 }
@@ -62,7 +62,7 @@ const loop = async (interaction) => {
     const server_queue = queue.get(interaction.guild.id)
 
     if (!server_queue) {
-        return void interaction.reply({
+        return void interaction.editReply({
             content: 'There are currently no songs playing!',
             ephemeral: true,
         });
@@ -71,14 +71,14 @@ const loop = async (interaction) => {
     if (!looping) {
         console.log('loop on')
         looping = true;
-        interaction.reply({ 
+        interaction.editReply({ 
             content: 'Looping is now on',
         });
         return;
     } else {
         console.log('loop off')
         looping = false
-        interaction.reply({
+        interaction.editReply({
             content: 'Looping is now off',
         });
         return;
@@ -91,7 +91,7 @@ const skip = async (interaction) =>  {
     const server_queue = queue.get(interaction.guild.id)
 
     if (!server_queue) {
-        return void interaction.reply({
+        return void interaction.editReply({
             content: "There are currently no songs playing!",
             ephemeral: true,
         });
@@ -99,7 +99,7 @@ const skip = async (interaction) =>  {
         const song = server_queue.songs[0];
         console.log(`skipped ${song.url}`)
         next_song(interaction.guild, audioplayer, interaction);
-        interaction.reply({
+        interaction.editReply({
             content: `:fast_forward:Skipped ${song.title}`
         })
     }
@@ -110,7 +110,7 @@ const stop = async (interaction) => {
     const server_queue = queue.get(interaction.guild.id);
     
     if(!server_queue) {
-        return void interaction.reply({
+        return void interaction.editReply({
             content: "There are currently no songs playing",
             ephemeral: true,
         });
@@ -127,7 +127,7 @@ const stop = async (interaction) => {
     firstsong = true;
     connection.destroy();
     queue.delete(interaction.guild.id);
-    interaction.reply('Music stopped!');
+    interaction.editReply('Music stopped!');
     return;
 }
 
@@ -180,7 +180,7 @@ module.exports = {
                 }
                 catch (err) {
                     queue.delete(interaction.guild.id);
-                    interaction.reply({
+                    interaction.editReply({
                         content: 'There was an error connecting!',
                         ephemeral: true,
                     });
@@ -190,13 +190,13 @@ module.exports = {
             } else {
                 server_queue.songs.push(song);
                 console.log(`queued ${song.url}`)
-                return interaction.reply({
+                return interaction.editReply({
                     content: `👍 **${song.title}** added to the queue!`,
                 });
             }
 
         } else {
-            return void interaction.reply({
+            return void interaction.editReply({
                 content: 'invalid url',
                 ephemeral: true,
             });
@@ -237,7 +237,7 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
     });
     if (firstsong) {
         firstsong = false;
-        await interaction.reply(`🎶 Now playing **${song.title}**\n${song.url}`)
+        await interaction.editReply(`🎶 Now playing **${song.title}**\n${song.url}`)
     } else {
         await song_queue.text_channel.send(`🎶 Now playing **${song.title}**`);
     }
