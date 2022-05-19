@@ -51,7 +51,7 @@ client.on('interactionCreate', async interaction => {
                 command.execute(interaction);
             } else if (music_channels.has(interaction.guild.id)) {
                 interaction.reply({
-                    content: 'Music commands needs to be sent in <#' + music_channels.get(interaction.guild.id) +'>',
+                    content: `Music commands needs to be sent in <# ${music_channels.get(interaction.guild.id)}>`,
                     ephemeral: true,
                 });
             } else if (interaction.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
