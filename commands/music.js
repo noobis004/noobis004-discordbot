@@ -3,8 +3,6 @@ const { GuildMember } = require('discord.js');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
 const ytdb = require('ytdl-core');
 const play = require('play-dl');
-const { resolve } = require('path');
-const { rejects } = require('assert');
 global.AbortController = require('node-abort-controller').AbortController;
 
 const queue = new Map();
@@ -159,6 +157,7 @@ module.exports = {
             song = {
                 title: song_info.videoDetails.title,
                 url: song_info.videoDetails.video_url,
+                thumbnail: song_info.thumbnail_url,
             };
 
             if (!server_queue) {
@@ -264,6 +263,9 @@ const next_song = async (guild, audioplayer, interaction) => {
 }
 
 const queue_empty = async (guild, audioplayer, text_channel, interaction) => {
+    await text_channel.send({
+        content: 'Queue is empty!',
+    }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
     let start = true;
     let queueEmptylooptimes = 150;
     let queueEmptytimeslooped = 0;
@@ -279,12 +281,12 @@ const queue_empty = async (guild, audioplayer, text_channel, interaction) => {
                     guildId: interaction.guild.id,
                     adapterCreator: interaction.guild.voiceAdapterCreator,
                 });
-                console.log('Queue empty disconnecting')
+                console.log('Inactive disconnecting')
                 connection.destroy();
                 queue.delete(guild.id);
                 firstsong = true;
                 await text_channel.send({
-                    content: 'Queue is empty leaving!',
+                    content: 'Bot inactive disconecting!',
                 }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
                 isdone = true;
                 return
@@ -295,4 +297,4 @@ const queue_empty = async (guild, audioplayer, text_channel, interaction) => {
         }
         await sleep(1000);
     }
-}
+}   
