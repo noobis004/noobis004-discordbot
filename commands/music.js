@@ -3,12 +3,16 @@ const { GuildMember } = require('discord.js');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
 const ytdb = require('ytdl-core');
 const play = require('play-dl');
+const { resolve } = require('path');
+const { rejects } = require('assert');
 global.AbortController = require('node-abort-controller').AbortController;
 
 const queue = new Map();
 var audioplayer;
 var firstsong = true;
 var looping = false;
+let isdone = false;
+const sleep = (waitTimeInMs) => new Promise(resolve => setTimeout(resolve, waitTimeInMs));
 
 
 const inVC = async (interaction) => {
@@ -98,10 +102,10 @@ const skip = async (interaction) =>  {
     } else {
         const song = server_queue.songs[0];
         console.log(`skipped ${song.url}`)
-        next_song(interaction.guild, audioplayer, interaction);
-        interaction.editReply({
+        await interaction.editReply({
             content: `:fast_forward:Skipped ${song.title}`
         })
+        next_song(interaction.guild, audioplayer, interaction);
     }
 }
 
@@ -209,17 +213,11 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
     const song_queue = queue.get(guild.id);
 
     if (!song) {
-        const connection = joinVoiceChannel({
-            channelId: interaction.member.voice.channel.id,
-            guildId: interaction.guild.id,
-            adapterCreator: interaction.guild.voiceAdapterCreator,
-        });
-        console.log('Queue empty disconnecting')
-        connection.destroy();
-        queue.delete(guild.id);
-        firstsong = true;
-        await song_queue.text_channel.send('Queue is empty leaving!');
-        return 
+        await queue_empty(guild, audioplayer, song_queue.text_channel, interaction);
+        if (isdone) {
+            isdone = false;
+            return;
+        }
     }
     let stream = await play.stream(song.url); 
     let resource = createAudioResource(stream.stream, {
@@ -255,3 +253,36 @@ const next_song = async (guild, audioplayer, interaction) => {
         song_Player(guild, song_queue.songs[0], audioplayer, interaction);
     }
 }
+
+const queue_empty = async (guild, audioplayer, text_channel, interaction) => {
+    let start = true;
+    let queueEmptylooptimes = 150;
+    let queueEmptytimeslooped = 0;
+    audioplayer.pause();
+    while(start) {
+        const song = queue.get(guild.id).songs[0];
+        if (!song) {
+            if (queueEmptytimeslooped <= queueEmptylooptimes) {
+                queueEmptytimeslooped += 1;
+            } else {
+                const connection = joinVoiceChannel({
+                    channelId: interaction.member.voice.channel.id,
+                    guildId: interaction.guild.id,
+                    adapterCreator: interaction.guild.voiceAdapterCreator,
+                });
+                console.log('Queue empty disconnecting')
+                connection.destroy();
+                queue.delete(guild.id);
+                firstsong = true;
+                text_channel.send('Queue is empty leaving!');
+                isdone = true;
+                return
+            }
+        } else {
+            await song_Player(guild, song, audioplayer, interaction)
+            start = false;
+        }
+        await sleep(1000);
+    }
+}
+
