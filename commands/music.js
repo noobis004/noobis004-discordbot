@@ -149,8 +149,8 @@ module.exports = {
 		.setName('play')
 		.setDescription('Joins the voice channel you are currently in!')
         .addStringOption(option => 
-            option.setName('song')
-            .setDescription('The song you wanna play')
+            option.setName('url')
+            .setDescription('The URL to the song you wanna play')
             .setRequired(true)),
     async execute(interaction) {
         await inVC(interaction);
@@ -164,7 +164,7 @@ module.exports = {
         let song = {};
 
         if (ytdb.validateURL(interaction.options.getString('song'))){
-            const song_info = await ytdb.getInfo(interaction.options.getString('song'));
+            const song_info = await ytdb.getInfo(interaction.options.getString('url'));
             song = {
                 title: song_info.videoDetails.title,
                 url: song_info.videoDetails.video_url,
@@ -300,6 +300,7 @@ const queue_empty = async (guild, audioplayer, text_channel, interaction) => {
                     content: 'Bot inactive disconecting!',
                 }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
                 isdone = true;
+                start = false;
                 return
             }
         } else {
