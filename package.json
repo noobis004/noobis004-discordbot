@@ -21,7 +21,7 @@
     "jquery": "^3.6.0",
     "jsdom": "^19.0.0",
     "libsodium-wrappers": "^0.7.10",
-    "mime": "^3.0.0",
+    "mime": ">=1.4.1",
     "node": "^15.14.0",
     "node-abort-controller": "^3.0.1",
     "play-dl": "^1.9.4",
