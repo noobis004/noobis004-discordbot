@@ -71,15 +71,15 @@ client.on('interactionCreate', async interaction => {
                 music_channels.set(interaction.guild.id, interaction.channel.id);
                 const obj = Object.fromEntries(music_channels);
                 const data = JSON.stringify(obj);
-                fs.writeFile('./serverid.json', data,  err => {
+                fs.writeFile('./musicChannelId.json', data,  err => {
                     if (err) {
                         console.error(err);
                     }
                 });
                 await interaction.reply({
                     content: 'Channel set to music channel',
+                    ephemeral: true,
                 });
-                setTimeout(interaction.deleteReply(), 20_000);
             } else {
                 interaction.reply({
                     content: 'you do not have the permission to do that',
