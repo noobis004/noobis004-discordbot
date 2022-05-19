@@ -10,25 +10,17 @@ var audioplayer;
 var firstsong = true;
 var looping = false;
 let isdone = false;
+let notinvc = false;
 const sleep = (waitTimeInMs) => new Promise(resolve => setTimeout(resolve, waitTimeInMs));
 
 
 const inVC = async (interaction) => {
     if (!(interaction.member instanceof GuildMember) || !interaction.member.voice.channel) {
-        return void interaction.editReply({
+        notinvc = true;
+        await interaction.editReply({
         content: 'You are not in a voice channel!',
-        ephemeral: true,
-        });
-    }
-    
-    if (
-        interaction.guild.me.voice.channelId &&
-        interaction.menmber.voice.channelId !== interaction.guild.me.voice.channelId
-    ) {
-        return void interaction.editReply({
-        content: 'You are not in my voice channel!',
-        ephemeral: true,
-        });
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
+        return;
     }
 }
 
@@ -38,10 +30,10 @@ const showqueue = async (interaction) => {
     var finalqueueeditReply = '**Currently playing**:\n'
     
     if (!song_queue) {
-        return void interaction.editReply({
+        await interaction.editReply({
             content: 'There are currently no songs playing',
-            ephemeral: true,
-        });
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
+        return;
     } else {
         const songnames = song_queue.songs;
         finalqueueeditReply = finalqueueeditReply + songnames[0].title + '\n'
@@ -49,8 +41,9 @@ const showqueue = async (interaction) => {
         for (let i = 1; i < songnames.length; i++) {
             finalsongnames = finalsongnames + songnames[i].title + '\n';
         }
+        finalsongnames = finalsongnames + '__                                 __';
         if(looping) {
-            finalsongnames = finalsongnames + 'loop is on'
+            finalsongnames = finalsongnames + '\n       **loop is on.**'
         }
        
         await interaction.editReply({
@@ -61,14 +54,19 @@ const showqueue = async (interaction) => {
 }
 
 const loop = async (interaction) => {
-    inVC(interaction);
+    await inVC(interaction);
+    if (notinvc) {
+        notinvc = false;
+        return;
+    }
+
     const server_queue = queue.get(interaction.guild.id)
 
     if (!server_queue) {
-        return void interaction.editReply({
+        await interaction.editReply({
             content: 'There are currently no songs playing!',
-            ephemeral: true,
-        });
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
+        return;
     }
 
     if (!looping) {
@@ -89,15 +87,19 @@ const loop = async (interaction) => {
 }
 
 const skip = async (interaction) =>  {
-    inVC(interaction);
+    await inVC(interaction);
+    if (notinvc) {
+        notinvc = false;
+        return;
+    }
 
     const server_queue = queue.get(interaction.guild.id)
 
     if (!server_queue) {
-        return void interaction.editReply({
+        await interaction.editReply({
             content: "There are currently no songs playing!",
-            ephemeral: true,
-        });
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
+        return;
     } else {
         const song = server_queue.songs[0];
         console.log(`skipped ${song.url}`)
@@ -109,14 +111,19 @@ const skip = async (interaction) =>  {
 }
 
 const stop = async (interaction) => {
-    inVC(interaction);
+    await inVC(interaction);
+    if (notinvc) {
+        notinvc = false;
+        return;
+    }
+
     const server_queue = queue.get(interaction.guild.id);
     
     if(!server_queue) {
-        return void interaction.editReply({
+        await interaction.editReply({
             content: "There are currently no songs playing",
-            ephemeral: true,
-        });
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
+        return;
     }
     const voiceChannel = interaction.member.voice.channel;
     const connection = joinVoiceChannel({
@@ -146,9 +153,13 @@ module.exports = {
             .setDescription('The song you wanna play')
             .setRequired(true)),
     async execute(interaction) {
+        await inVC(interaction);
+        if (notinvc) {
+            notinvc = false;
+            return;
+        }
+
         const voiceChannel = interaction.member.voice.channel;
-        inVC(interaction);
-        
         const server_queue = queue.get(interaction.guild.id);
         let song = {};
 
@@ -204,10 +215,10 @@ module.exports = {
             }
 
         } else {
-            return void interaction.editReply({
+            await interaction.editReply({
                 content: 'invalid url',
-                ephemeral: true,
-            });
+            }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
+            return;
         }  
     },skip, stop, loop, showqueue
 };
