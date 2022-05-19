@@ -296,4 +296,3 @@ const queue_empty = async (guild, audioplayer, text_channel, interaction) => {
         await sleep(1000);
     }
 }
-
