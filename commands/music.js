@@ -240,7 +240,7 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
         firstsong = false;
         await interaction.reply(`🎶 Now playing **${song.title}**\n${song.url}`)
     } else {
-        await song_queue.text_channel.send(`🎶 Now playing **${song.title}**\n${song.url}`);
+        await song_queue.text_channel.send(`🎶 Now playing **${song.title}**`);
     }
 }
 
