@@ -25,7 +25,7 @@ const inVC = async (interaction) => {
     
     if (
         interaction.guild.me.voice.channelId &&
-        interaction.member.voice.channelId !== interaction.guild.me.voice.channelId
+        interaction.menmber.voice.channelId !== interaction.guild.me.voice.channelId
     ) {
         return void interaction.editReply({
         content: 'You are not in my voice channel!',
@@ -55,9 +55,10 @@ const showqueue = async (interaction) => {
             finalsongnames = finalsongnames + 'loop is on'
         }
        
-        interaction.editReply({
+        await interaction.editReply({
             content: finalqueueeditReply + finalsongnames,
-        });
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
+        return;
     }
 }
 
@@ -75,16 +76,16 @@ const loop = async (interaction) => {
     if (!looping) {
         console.log('loop on')
         looping = true;
-        interaction.editReply({ 
+        await interaction.editReply({ 
             content: 'Looping is now on',
-        });
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
         return;
     } else {
         console.log('loop off')
         looping = false
-        interaction.editReply({
+        await interaction.editReply({
             content: 'Looping is now off',
-        });
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
         return;
     }
 }
@@ -104,7 +105,7 @@ const skip = async (interaction) =>  {
         console.log(`skipped ${song.url}`)
         await interaction.editReply({
             content: `:fast_forward:Skipped ${song.title}`
-        })
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
         next_song(interaction.guild, audioplayer, interaction);
     }
 }
@@ -131,7 +132,9 @@ const stop = async (interaction) => {
     firstsong = true;
     connection.destroy();
     queue.delete(interaction.guild.id);
-    interaction.editReply('Music stopped!');
+    await interaction.editReply({
+        content: 'Music stopped!',
+    }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
     return;
 }
 
@@ -194,9 +197,11 @@ module.exports = {
             } else {
                 server_queue.songs.push(song);
                 console.log(`queued ${song.url}`)
-                return interaction.editReply({
+                await interaction.editReply({
                     content: `👍 **${song.title}** added to the queue!`,
-                });
+                }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
+                setTimeout(interaction.deleteReply, 20_000);
+                return
             }
 
         } else {
@@ -235,9 +240,13 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
     });
     if (firstsong) {
         firstsong = false;
-        await interaction.editReply(`🎶 Now playing **${song.title}**\n${song.url}`)
+        await interaction.editReply({
+            content: `🎶 Now playing **${song.title}**\n${song.url}`,
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
     } else {
-        await song_queue.text_channel.send(`🎶 Now playing **${song.title}**`);
+        await song_queue.text_channel.send({
+            content: `🎶 Now playing **${song.title}**`,
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
     }
 }
 
@@ -274,7 +283,9 @@ const queue_empty = async (guild, audioplayer, text_channel, interaction) => {
                 connection.destroy();
                 queue.delete(guild.id);
                 firstsong = true;
-                text_channel.send('Queue is empty leaving!');
+                await text_channel.send({
+                    content: 'Queue is empty leaving!',
+                }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
                 isdone = true;
                 return
             }

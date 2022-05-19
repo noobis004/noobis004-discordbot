@@ -76,12 +76,14 @@ client.on('interactionCreate', async interaction => {
                         console.error(err);
                     }
                 });
-                interaction.reply({
+                await interaction.reply({
                     content: 'Channel set to music channel',
                 });
+                setTimeout(interaction.deleteReply(), 20_000);
             } else {
                 interaction.reply({
                     content: 'you do not have the permission to do that',
+                    ephemeral: true,
                 });
             }
         } else {
