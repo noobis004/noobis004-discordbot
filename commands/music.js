@@ -70,12 +70,14 @@ const loop = async (interaction) => {
     }
 
     if (!looping) {
+        console.log('loop on')
         looping = true;
-        interaction.reply({
+        interaction.reply({ 
             content: 'Looping is now on',
         });
         return;
     } else {
+        console.log('loop off')
         looping = false
         interaction.reply({
             content: 'Looping is now off',
@@ -96,6 +98,7 @@ const skip = async (interaction) =>  {
         });
     } else {
         const song = server_queue.songs[0];
+        console.log(`skipped ${song.url}`)
         next_song(interaction.guild, audioplayer, interaction);
         interaction.reply({
             content: `:fast_forward:Skipped ${song.title}`
@@ -120,6 +123,7 @@ const stop = async (interaction) => {
         adapterCreator: interaction.guild.voiceAdapterCreator,
     });
     
+    console.log('Music stopped, Disconnecting')
     looping = false;
     firstsong = true;
     connection.destroy();
@@ -186,6 +190,7 @@ module.exports = {
 
             } else {
                 server_queue.songs.push(song);
+                console.log(`queued ${song.url}`)
                 return interaction.reply({
                     content: `👍 **${song.title}** added to the queue!`,
                 });
@@ -210,23 +215,25 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
             guildId: interaction.guild.id,
             adapterCreator: interaction.guild.voiceAdapterCreator,
         });
+        console.log('Queue empty disconnecting')
         connection.destroy();
         queue.delete(guild.id);
         firstsong = true;
         await song_queue.text_channel.send('Queue is empty leaving!');
         return 
     }
-    console.log(song.url);
     let stream = await play.stream(song.url); 
     let resource = createAudioResource(stream.stream, {
         inputType: stream.type
     })
+    console.log(`playing ${song.url}`);
     audioplayer.play(resource);     
     audioplayer.on('error', error => {
         console.error(`Error: ${error.message}`);
         next_song(guild, audioplayer, interaction);
     });
     audioplayer.on(AudioPlayerStatus.Idle, () => {
+        console.log('Song done playing next song')
         next_song(guild, audioplayer, interaction);
     });
     if (firstsong) {
