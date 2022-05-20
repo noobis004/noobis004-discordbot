@@ -163,7 +163,7 @@ module.exports = {
         const server_queue = queue.get(interaction.guild.id);
         let song = {};
 
-        if (ytdb.validateURL(interaction.options.getString('song'))){
+        if (ytdb.validateURL(interaction.options.getString('url'))){
             const song_info = await ytdb.getInfo(interaction.options.getString('url'));
             song = {
                 title: song_info.videoDetails.title,
