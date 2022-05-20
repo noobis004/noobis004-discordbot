@@ -1,9 +1,8 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const Client = require('./client/Client.js');
-const config = require('./config.json');
+const config = require('./config2.json');
 const { Player } = require('discord-player');
-const { lookup } = require('dns');
 global.AbortController = require('node-abort-controller').AbortController;
 
 
