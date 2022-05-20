@@ -17,7 +17,7 @@ var music_channels = new Map();
 var music_embed = new Map();
 const musicChannelId = readFileLines('./musicChannelId.json')
 if (musicChannelId) {
-    ids = JSON.parse(data.toString());
+    ids = JSON.parse(musicChannelId.toString());
     music_channels = new Map(Object.entries(ids));
 }
 
