@@ -38,9 +38,14 @@ const showqueue = async (interaction) => {
         const songnames = song_queue.songs;
         finalqueueeditReply = finalqueueeditReply + songnames[0].title + '\n'
 
-        for (let i = 1; i < songnames.length; i++) {
-            finalsongnames = finalsongnames + songnames[i].title + '\n';
+        if (!songnames[1].title) {
+            finalsongnames = finalsongnames + 'no songs queued up atm\n';
+        }else {
+            for (let i = 1; i < songnames.length; i++) {
+                finalsongnames = finalsongnames + songnames[i].title + '\n';
+            }
         }
+        
         finalsongnames = finalsongnames + '__                                 __';
         if(looping) {
             finalsongnames = finalsongnames + '\n       **loop is on.**'
