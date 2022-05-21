@@ -6,8 +6,8 @@ const play = require('play-dl');
 global.AbortController = require('node-abort-controller').AbortController;
 
 const queue = new Map();
-var audioplayer;
 var firstsong = true;
+var audioplayer;
 var looping = false;
 let isdone = false;
 let notinvc = false;
@@ -97,7 +97,7 @@ const skip = async (interaction) =>  {
         notinvc = false;
         return;
     }
-
+    
     const server_queue = queue.get(interaction.guild.id)
 
     if (!server_queue) {
