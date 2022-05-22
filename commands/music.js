@@ -97,7 +97,12 @@ const skip = async (interaction) =>  {
         notinvc = false;
         return;
     }
-    
+    const voiceChannel = interaction.member.voice.channel;
+    const connection = joinVoiceChannel({
+        channelId: voiceChannel.id,
+        guildId: interaction.guild.id,
+        adapterCreator: interaction.guild.voiceAdapterCreator,
+    });
     const server_queue = queue.get(interaction.guild.id)
 
     if (!server_queue) {
@@ -111,7 +116,7 @@ const skip = async (interaction) =>  {
         await interaction.editReply({
             content: `:fast_forward:Skipped ${song.title}`
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
-        next_song(interaction.guild, audioplayer, interaction);
+        next_song(interaction.guild, audioplayer, interaction, connection);
     }
 }
 
@@ -198,7 +203,7 @@ module.exports = {
                     connection.subscribe(audioplayer);
 
                     queue_constructor.connection = connection;
-                    song_Player(interaction.guild, queue_constructor.songs[0], audioplayer, interaction);
+                    song_Player(interaction.guild, queue_constructor.songs[0], audioplayer, interaction, connection);
                 }
                 catch (err) {
                     queue.delete(interaction.guild.id);
@@ -229,11 +234,11 @@ module.exports = {
 };
 
 
-const song_Player = async (guild, song, audioplayer, interaction) => {
+const song_Player = async (guild, song, audioplayer, interaction, connection) => {
     const song_queue = queue.get(guild.id);
 
     if (!song) {
-        await queue_empty(guild, audioplayer, song_queue.text_channel, interaction);
+        await queue_empty(guild, audioplayer, song_queue.text_channel, interaction, connection);
         if (isdone) {
             isdone = false;
             return;
@@ -251,7 +256,7 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
     });
     audioplayer.on(AudioPlayerStatus.Idle, () => {
         console.log('Song done playing next song')
-        next_song(guild, audioplayer, interaction);
+        next_song(guild, audioplayer, interaction, connection);
     });
     if (firstsong) {
         firstsong = false;
@@ -265,20 +270,20 @@ const song_Player = async (guild, song, audioplayer, interaction) => {
     }
 }
 
-const next_song = async (guild, audioplayer, interaction) => {
+const next_song = async (guild, audioplayer, interaction , connection) => {
     const song_queue = queue.get(guild.id);
 
     if (looping) {
         const loopsong = song_queue.songs.shift();
         song_queue.songs.push(loopsong);
-        song_Player(guild, song_queue.songs[0], audioplayer, interaction);
+        song_Player(guild, song_queue.songs[0], audioplayer, interaction, connection);
     } else {
         song_queue.songs.shift();
-        song_Player(guild, song_queue.songs[0], audioplayer, interaction);
+        song_Player(guild, song_queue.songs[0], audioplayer, interaction, connection);
     }
 }
 
-const queue_empty = async (guild, audioplayer, text_channel, interaction) => {
+const queue_empty = async (guild, audioplayer, text_channel, interaction, connection) => {
     await text_channel.send({
         content: 'Queue is empty!',
     }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
@@ -292,11 +297,6 @@ const queue_empty = async (guild, audioplayer, text_channel, interaction) => {
             if (queueEmptytimeslooped <= queueEmptylooptimes) {
                 queueEmptytimeslooped += 1;
             } else {
-                const connection = joinVoiceChannel({
-                    channelId: interaction.member.voice.channel.id,
-                    guildId: interaction.guild.id,
-                    adapterCreator: interaction.guild.voiceAdapterCreator,
-                });
                 console.log('Inactive disconnecting')
                 connection.destroy();
                 queue.delete(guild.id);
@@ -309,8 +309,10 @@ const queue_empty = async (guild, audioplayer, text_channel, interaction) => {
                 return
             }
         } else {
-            await song_Player(guild, song, audioplayer, interaction)
+            await song_Player(guild, song, audioplayer, interaction, connection)
             start = false;
+            isdone = true;
+            return;
         }
         await sleep(1000);
     }
