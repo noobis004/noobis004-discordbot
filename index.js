@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const Client = require('./client/Client.js');
-const config = require('./config2.json');
+const config = require('./config.json');
 const { Player } = require('discord-player');
 global.AbortController = require('node-abort-controller').AbortController;
 

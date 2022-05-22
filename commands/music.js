@@ -38,7 +38,7 @@ const showqueue = async (interaction) => {
         const songnames = song_queue.songs;
         finalqueueeditReply = finalqueueeditReply + songnames[0].title + '\n'
 
-        if (!songnames[1].title) {
+        if (!songnames[1]) {
             finalsongnames = finalsongnames + 'no songs queued up atm\n';
         }else {
             for (let i = 1; i < songnames.length; i++) {
@@ -236,6 +236,7 @@ module.exports = {
 
 const song_Player = async (guild, song, audioplayer, interaction, connection) => {
     const song_queue = queue.get(guild.id);
+    let nextsong = false;
 
     if (!song) {
         await queue_empty(guild, audioplayer, song_queue.text_channel, interaction, connection);
@@ -257,6 +258,7 @@ const song_Player = async (guild, song, audioplayer, interaction, connection) =>
     audioplayer.on(AudioPlayerStatus.Idle, () => {
         console.log('Song done playing next song')
         next_song(guild, audioplayer, interaction, connection);
+        return;
     });
     if (firstsong) {
         firstsong = false;
