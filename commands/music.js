@@ -11,6 +11,7 @@ var audioplayer;
 var looping = false;
 let isdone = false;
 let notinvc = false;
+let turnonlookforidle = true;
 const sleep = (waitTimeInMs) => new Promise(resolve => setTimeout(resolve, waitTimeInMs));
 
 
@@ -145,6 +146,7 @@ const stop = async (interaction) => {
     console.log('Music stopped, Disconnecting')
     looping = false;
     firstsong = true;
+    turnonlookforidle = true;
     connection.destroy();
     queue.delete(interaction.guild.id);
     await interaction.editReply({
@@ -255,11 +257,15 @@ const song_Player = async (guild, song, audioplayer, interaction, connection) =>
         console.error(`Error: ${error.message}`);
         next_song(guild, audioplayer, interaction);
     });
-    audioplayer.on(AudioPlayerStatus.Idle, () => {
-        console.log('Song done playing next song')
-        next_song(guild, audioplayer, interaction, connection);
-        return;
-    });
+    if (turnonlookforidle) {
+        audioplayer.on(AudioPlayerStatus.Idle, () => {
+            console.log('Song done playing next song')
+            next_song(guild, audioplayer, interaction, connection);
+            return;
+        });
+        turnonlookforidle = false;
+    }
+   
     if (firstsong) {
         firstsong = false;
         await interaction.editReply({
@@ -303,6 +309,7 @@ const queue_empty = async (guild, audioplayer, text_channel, interaction, connec
                 connection.destroy();
                 queue.delete(guild.id);
                 firstsong = true;
+                turnonlookforidle = true;
                 await text_channel.send({
                     content: 'Bot inactive disconecting!',
                 }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
