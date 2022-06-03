@@ -90,14 +90,14 @@ const loop = async (interaction) => {
     }
 
     if (!server_queue.looping) {
-        console.log('loop on')
+        console.log(`loop on :${interaction.guild.name} `)
         server_queue.looping = true;
         await interaction.editReply({ 
             content: 'Looping is now on',
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
         return;
     } else {
-        console.log('loop off')
+        console.log(`loop off :${interaction.guild.name}`)
         server_queue.looping = false;
         await interaction.editReply({
             content: 'Looping is now off',
@@ -125,7 +125,7 @@ const skip = async (interaction) =>  {
         return;
     } else {
         const song = server_queue.songs[0];
-        console.log(`skipped ${song.url}`)
+        console.log(`skipped ${song.url} :${interaction.guild.name}`)
         await interaction.editReply({
             content: `:fast_forward:Skipped ${song.title}`
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
@@ -151,7 +151,7 @@ const stop = async (interaction) => {
         return;
     }
     
-    console.log('Music stopped, Disconnecting')
+    console.log(`Music stopped, Disconnecting :${interaction.guild.name}`)
     server_queue.connection.destroy();
     queue.delete(interaction.guild.id);
     await interaction.editReply({
@@ -231,7 +231,7 @@ module.exports = {
 
             } else {
                 server_queue.songs.push(song);
-                console.log(`queued ${song.url}`)
+                console.log(`queued ${song.url} :${interaction.guild.name}`)
                 await interaction.editReply({
                     content: `👍 **${song.title}** added to the queue!`,
                 }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
@@ -251,7 +251,6 @@ module.exports = {
 const song_Player = async (guild, song, audioplayer, interaction, connection) => {
     const song_queue = queue.get(guild.id);
     const isdone = isDoneMap.get(guild.id);
-    let nextsong = false;
 
     if (!song) {
         await queue_empty(guild, audioplayer, song_queue.text_channel, interaction, connection);
@@ -264,15 +263,15 @@ const song_Player = async (guild, song, audioplayer, interaction, connection) =>
     let resource = createAudioResource(stream.stream, {
         inputType: stream.type
     })
-    console.log(`playing ${song.url}`);
+    console.log(`playing ${song.url} :${guild.name}`);
     audioplayer.play(resource);     
     audioplayer.on('error', error => {
         console.error(`Error: ${error.message}`);
-        next_song(guild, audioplayer, interaction);
+        next_song(guild, audioplayer, interaction, connection);
     });
     if (song_queue.turnonlookforidle) {
         audioplayer.on(AudioPlayerStatus.Idle, () => {
-            console.log('Song done playing next song')
+            console.log(`Song done playing next song :${guild.name}`)
             next_song(guild, audioplayer, interaction, connection);
             return;
         });
@@ -310,7 +309,7 @@ const queue_empty = async (guild, audioplayer, text_channel, interaction, connec
     }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
     let start = true;
     let isdone = false;
-    let queueEmptylooptimes = 5;
+    let queueEmptylooptimes = 150;
     let queueEmptytimeslooped = 0;
     audioplayer.pause();
     while(start) {
@@ -319,7 +318,7 @@ const queue_empty = async (guild, audioplayer, text_channel, interaction, connec
             if (queueEmptytimeslooped <= queueEmptylooptimes) {
                 queueEmptytimeslooped += 1;
             } else {
-                console.log('Inactive disconnecting')
+                console.log(`Inactive disconnecting :${guild.name}`)
                 connection.destroy();
                 queue.delete(guild.id);
                 await text_channel.send({
