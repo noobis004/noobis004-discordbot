@@ -54,7 +54,7 @@ const showqueue = async (interaction) => {
             finalsongnames = finalsongnames + 'no songs queued up atm\n';
         }else {
             for (let i = 1; i < songnames.length; i++) {
-                finalsongnames = finalsongnames + songnames[i].title + '\n';
+                finalsongnames = finalsongnames + `(${i}) ` + songnames[i].title + '\n';
             }
         }
         
@@ -141,9 +141,7 @@ const stop = async (interaction) => {
         return;
     }
 
-
     const server_queue = queue.get(interaction.guild.id);
-    
     if(!server_queue) {
         await interaction.editReply({
             content: "There are currently no songs playing",
@@ -160,6 +158,42 @@ const stop = async (interaction) => {
     return;
 }
 
+const removesong = async (interaction) => {
+    await inVC(interaction);
+    const notinvc = notInVcMap.get(interaction.guild.id);
+    if(notinvc) {
+        notInVcMap.delete(interaction.guild.id);    
+        return;
+    }
+
+    const server_queue = queue.get(interaction.guild.id);
+    if(!server_queue) {
+        await interaction.editReply({
+            content: "There are currently no songs playing",
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
+        return;
+    }
+    const SongID = interaction.options.getInteger('songid');
+
+    const songname = server_queue.songs
+
+    if(!server_queue.songs[SongID]) {
+        await interaction.editReply({
+            content: `Specified songID doesn't exist`,
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
+        return;
+    } else {
+        server_queue.songs.splice(SongID, 1);
+        await interaction.editReply({
+            content: `removed ${songname[SongID].title}`,
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
+        return;
+    }
+}
+
+const movetofirst = async (interaction) => {
+
+}
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -244,7 +278,7 @@ module.exports = {
             }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
             return;
         }  
-    },skip, stop, loop, showqueue
+    },skip, stop, loop, showqueue, removesong, movetofirst
 };
 
 
