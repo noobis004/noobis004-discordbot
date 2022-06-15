@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { removesong } = require('./music')
+const { movetofirst } = require('./music')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -10,7 +10,7 @@ module.exports = {
             .setDescription('The ID of the song you wanna play next (find by doing /queue).')
             .setRequired(true)),
     async execute(interaction) {
-        removesong(interaction)
+        movetofirst(interaction)
     },
 };
 

@@ -43,7 +43,7 @@ const showqueue = async (interaction) => {
     
     if (!song_queue) {
         await interaction.editReply({
-            content: 'There are currently no songs playing',
+            content: 'There are currently no songs playing.',
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
         return;
     } else {
@@ -51,15 +51,15 @@ const showqueue = async (interaction) => {
         finalqueueeditReply = finalqueueeditReply + songnames[0].title + '\n'
 
         if (!songnames[1]) {
-            finalsongnames = finalsongnames + 'no songs queued up atm\n';
+            finalsongnames = finalsongnames + 'no songs queued up atm.\n';
         }else {
             for (let i = 1; i < songnames.length; i++) {
-                finalsongnames = finalsongnames + `(${i}) ` + songnames[i].title + '\n';
+                finalsongnames = finalsongnames + `(${i}) ${songnames[i].title}\n`;
             }
         }
         
         finalsongnames = finalsongnames + '__                                 __';
-        if(song_queue.looping) {
+        if (song_queue.looping) {
             finalsongnames = finalsongnames + '\n       **loop is on.**'
         }
        
@@ -93,14 +93,14 @@ const loop = async (interaction) => {
         console.log(`loop on :${interaction.guild.name} `)
         server_queue.looping = true;
         await interaction.editReply({ 
-            content: 'Looping is now on',
+            content: 'Looping is now on.',
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
         return;
     } else {
         console.log(`loop off :${interaction.guild.name}`)
         server_queue.looping = false;
         await interaction.editReply({
-            content: 'Looping is now off',
+            content: 'Looping is now off.',
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
         return;
     }
@@ -127,7 +127,7 @@ const skip = async (interaction) =>  {
         const song = server_queue.songs[0];
         console.log(`skipped ${song.url} :${interaction.guild.name}`)
         await interaction.editReply({
-            content: `:fast_forward:Skipped ${song.title}`
+            content: `:fast_forward:Skipped ${song.title}.`
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
         next_song(interaction.guild, server_queue.audioplayer, interaction, server_queue.connection);
     }
@@ -142,9 +142,9 @@ const stop = async (interaction) => {
     }
 
     const server_queue = queue.get(interaction.guild.id);
-    if(!server_queue) {
+    if (!server_queue) {
         await interaction.editReply({
-            content: "There are currently no songs playing",
+            content: "There are currently no songs playing.",
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
         return;
     }
@@ -161,15 +161,15 @@ const stop = async (interaction) => {
 const removesong = async (interaction) => {
     await inVC(interaction);
     const notinvc = notInVcMap.get(interaction.guild.id);
-    if(notinvc) {
+    if (notinvc) {
         notInVcMap.delete(interaction.guild.id);    
         return;
     }
 
     const server_queue = queue.get(interaction.guild.id);
-    if(!server_queue) {
+    if (!server_queue) {
         await interaction.editReply({
-            content: "There are currently no songs playing",
+            content: "There are currently no songs playing.",
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
         return;
     }
@@ -177,16 +177,16 @@ const removesong = async (interaction) => {
     const SongID = interaction.options.getInteger('songid');
     const songname = server_queue.songs
 
-    if(!server_queue.songs[SongID]) {
+    if (!server_queue.songs[SongID] || SongID === 0) {
         await interaction.editReply({
-            content: `Specified songID doesn't exist`,
+            content: `Specified songID doesn't exist.`,
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
         return;
     } else {
-        server_queue.songs.splice(SongID, 1);
         await interaction.editReply({
-            content: 'removed' + songname[SongID].title,
+            content: `removed ${songname[SongID].title}.`,
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
+        server_queue.songs.splice(SongID, 1);
         return;
     }
 }
@@ -194,15 +194,15 @@ const removesong = async (interaction) => {
 const movetofirst = async (interaction) => {
      await inVC(interaction);
     const notinvc = notInVcMap.get(interaction.guild.id);
-    if(notinvc) {
+    if (notinvc) {
         notInVcMap.delete(interaction.guild.id);    
         return;
     }
 
     const server_queue = queue.get(interaction.guild.id);
-    if(!server_queue) {
+    if (!server_queue) {
         await interaction.editReply({
-            content: "There are currently no songs playing",
+            content: "There are currently no songs playing.",
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
         return;
     }
@@ -210,17 +210,21 @@ const movetofirst = async (interaction) => {
     const SongID = interaction.options.getInteger('songid');
     const songname = server_queue.songs
 
-    if(!server_queue.songs[SongID]) {
+    if (!server_queue.songs[SongID] || SongID === 0) {
         await interaction.editReply({
-            content: `Specified songID doesn't exist`,
+            content: `Specified songID doesn't exist.`,
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
         return;
+    } else if (SongID === 1) {
+        await interaction.editReply({
+            content: 'Song is already first in queue.'
+        })
     } else {
-        const selectedSong = server_queue.splice(SongID, 1);
-        server_queue.splice(1, 0, selectedSong);
         await interaction.editReply({
             content: songname[SongID].title + ' will play next.'
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
+        const selectedSong = server_queue.songs.splice(SongID, 1)[0];
+        server_queue.songs.splice(1, 0, selectedSong);
         return;
     }
 }
@@ -304,7 +308,7 @@ module.exports = {
 
         } else {
             await interaction.editReply({
-                content: 'invalid url',
+                content: 'invalid url!',
             }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
             return;
         }  
@@ -335,7 +339,7 @@ const song_Player = async (guild, song, audioplayer, interaction, connection) =>
     });
     if (song_queue.turnonlookforidle) {
         audioplayer.on(AudioPlayerStatus.Idle, () => {
-            console.log(`Song done playing next song :${guild.name}`)
+            console.log(`Song done playing next song :${guild.name}.`)
             next_song(guild, audioplayer, interaction, connection);
             return;
         });
@@ -345,11 +349,11 @@ const song_Player = async (guild, song, audioplayer, interaction, connection) =>
     if (song_queue.firstsong) {
         song_queue.firstsong = false;
         await interaction.editReply({
-            content: `🎶 Now playing **${song.title}**\n${song.url}`,
+            content: `🎶 Now playing **${song.title}**\n${song.url}.`,
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
     } else {
         await song_queue.text_channel.send({
-            content: `🎶 Now playing **${song.title}**`,
+            content: `🎶 Now playing **${song.title}**.`,
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
     }
 }
