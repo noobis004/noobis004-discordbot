@@ -192,7 +192,7 @@ const removesong = async (interaction) => {
 }
 
 const movetofirst = async (interaction) => {
-     await inVC(interaction);
+    await inVC(interaction);
     const notinvc = notInVcMap.get(interaction.guild.id);
     if (notinvc) {
         notInVcMap.delete(interaction.guild.id);    
