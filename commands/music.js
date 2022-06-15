@@ -9,16 +9,11 @@ const queue = new Map();
 const notInVcMap = new Map();
 const isDoneMap = new Map();
 const sleep = (waitTimeInMs) => new Promise(resolve => setTimeout(resolve, waitTimeInMs));
-function array_move(arr, old_index, new_index) {
-    if (new_index >= arr.length) {
-        var k = new_index - arr.length + 1;
-        while (k--) {
-            arr.push(undefined);
-        }
-    }
-    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
-    return arr; // for testing
-};
+function arraymove(arr, fromIndex, toIndex) {
+    var element = arr[fromIndex];
+    arr.splice(fromIndex, 1);
+    arr.splice(toIndex, 0, element);
+}
 
 
 const inVC = async (interaction) => {
@@ -233,8 +228,8 @@ const movetofirst = async (interaction) => {
         await interaction.editReply({
             content: songname[SongID].title + ' will play next.',
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
-        const selectedSong = server_queue.songs.splice(SongID, 1);
-        await array_move(server_queue, SongID, 1);
+        await arraymove(server_queue.songs, SongID, 1);
+        //const selectedSong = server_queue.songs.splice(SongID, 1);
         //server_queue.songs.splice(1, 0, selectedSong);
         return;
     }
