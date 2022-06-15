@@ -221,12 +221,16 @@ const movetofirst = async (interaction) => {
         })
     } else {
         await interaction.editReply({
-            content: songname[SongID].title + ' will play next.'
+            content: songname[SongID].title + ' will play next.',
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
         const selectedSong = server_queue.songs.splice(SongID, 1)[0];
         server_queue.songs.splice(1, 0, selectedSong);
         return;
     }
+    await interaction.editReply({
+        content: songname[SongID].title + ' will play next.',
+    }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
+
 }
 
 module.exports = {
