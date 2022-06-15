@@ -217,8 +217,8 @@ const movetofirst = async (interaction) => {
         return;
     } else if (SongID === 1) {
         await interaction.editReply({
-            content: 'Song is already first in queue.'
-        })
+            content: 'Song is already first in queue.',
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
     } else {
         await interaction.editReply({
             content: songname[SongID].title + ' will play next.',
