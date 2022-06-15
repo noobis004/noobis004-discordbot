@@ -192,7 +192,7 @@ const removesong = async (interaction) => {
 }
 
 const movetofirst = async (interaction) => {
-     await inVC(interaction);
+    await inVC(interaction);
     const notinvc = notInVcMap.get(interaction.guild.id);
     if (notinvc) {
         notInVcMap.delete(interaction.guild.id);    
@@ -221,7 +221,7 @@ const movetofirst = async (interaction) => {
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
     } else {
         await interaction.editReply({
-            content: songname[SongID].title + ' will play next.'
+            content: songname[SongID].title + ' will play next.',
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
         const selectedSong = server_queue.songs.splice(SongID, 1)[0];
         server_queue.songs.splice(1, 0, selectedSong);
