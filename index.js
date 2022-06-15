@@ -47,7 +47,7 @@ client.on('interactionCreate', async interaction => {
     if (!command) return;
     
     try {
-        if (interaction.commandName == 'play' || interaction.commandName == 'stop' || interaction.commandName == 'skip' || interaction.commandName == "loop" || interaction.commandName == "queue" || interaction.commandName == "removesong") {
+        if (interaction.commandName == 'play' || interaction.commandName == 'stop' || interaction.commandName == 'skip' || interaction.commandName == "loop" || interaction.commandName == "queue" || interaction.commandName == "removesong" || interaction.commandName == "playnext") {
             if (music_channels.get(interaction.guild.id) === interaction.channel.id) {
                 await interaction.deferReply();
                 command.execute(interaction);

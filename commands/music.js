@@ -173,8 +173,8 @@ const removesong = async (interaction) => {
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
         return;
     }
-    const SongID = interaction.options.getInteger('songid');
 
+    const SongID = interaction.options.getInteger('songid');
     const songname = server_queue.songs
 
     if(!server_queue.songs[SongID]) {
@@ -185,14 +185,44 @@ const removesong = async (interaction) => {
     } else {
         server_queue.songs.splice(SongID, 1);
         await interaction.editReply({
-            content: `removed ${songname[SongID].title}`,
+            content: 'removed' + songname[SongID].title,
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
         return;
     }
 }
 
 const movetofirst = async (interaction) => {
+     await inVC(interaction);
+    const notinvc = notInVcMap.get(interaction.guild.id);
+    if(notinvc) {
+        notInVcMap.delete(interaction.guild.id);    
+        return;
+    }
 
+    const server_queue = queue.get(interaction.guild.id);
+    if(!server_queue) {
+        await interaction.editReply({
+            content: "There are currently no songs playing",
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
+        return;
+    }
+    
+    const SongID = interaction.options.getInteger('songid');
+    const songname = server_queue.songs
+
+    if(!server_queue.songs[SongID]) {
+        await interaction.editReply({
+            content: `Specified songID doesn't exist`,
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
+        return;
+    } else {
+        const selectedSong = server_queue.splice(SongID, 1);
+        server_queue.splice(1, 0, selectedSong);
+        await interaction.editReply({
+            content: songname[SongID].title + ' will play next.'
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
+        return;
+    }
 }
 
 module.exports = {
