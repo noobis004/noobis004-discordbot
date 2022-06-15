@@ -9,9 +9,16 @@ const queue = new Map();
 const notInVcMap = new Map();
 const isDoneMap = new Map();
 const sleep = (waitTimeInMs) => new Promise(resolve => setTimeout(resolve, waitTimeInMs));
-function insertAt(array, index, ...elementsArray) {
-    array.splice(index, 0, ...elements);
-}
+function array_move(arr, old_index, new_index) {
+    if (new_index >= arr.length) {
+        var k = new_index - arr.length + 1;
+        while (k--) {
+            arr.push(undefined);
+        }
+    }
+    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+    return arr; // for testing
+};
 
 
 const inVC = async (interaction) => {
@@ -227,7 +234,8 @@ const movetofirst = async (interaction) => {
             content: songname[SongID].title + ' will play next.',
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
         const selectedSong = server_queue.songs.splice(SongID, 1);
-        insertAt(server_queue.songs, SongID, selectedSong);
+        await array_move(server_queue, SongID, 1);
+        //server_queue.songs.splice(1, 0, selectedSong);
         return;
     }
 }
