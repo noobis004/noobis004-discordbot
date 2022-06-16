@@ -26,7 +26,7 @@ const commandsembed = new MessageEmbed()
 .setTitle('**Music Commands**')
 .setDescription('All muscic commands.')
 .setAuthor({ name: 'Dumb fuck', iconURL: 'https://i.imgur.com/E2nCUbn.png'})
-.addField(
+.addFields(
     { name: "/play ('URL')", value: "d", inline: true },
     { name: "/stop", value: "d" },
     { name: "/skip", value: "d", inline: true },
