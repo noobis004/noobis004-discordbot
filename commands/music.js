@@ -23,7 +23,7 @@ function array_move(arr, old_index, new_index) {
         }
     }
     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
-    return arr; // for testing purposes
+    return;
 };
 
 
@@ -240,7 +240,6 @@ const movetofirst = async (interaction) => {
             content: songname[SongID].title + ' will play next.',
         }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
         await array_move(server_queue.songs, SongID, 1); 
-        console.log(`${songname[1]} moved to first in queue ${interaction.guild.name}`);
         return;
     }
 }
