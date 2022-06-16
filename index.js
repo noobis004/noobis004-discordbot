@@ -27,7 +27,11 @@ const commandsembed = new MessageEmbed()
 .setDescription('All muscic commands.')
 .setAuthor({ name: 'Dumb fuck', iconURL: 'https://i.imgur.com/E2nCUbn.png'})
 .addField(
-    { name: "/play ('URL')", value: ""}
+    { name: "/play ('URL')", value: "", inline: true },
+    { name: "/stop", value: "" },
+    { name: "/skip", value: "", inline: true },
+    { name: "/loop", value: "" },
+    { name: "/queue", value: "" }, 
 )
 
 
@@ -88,6 +92,7 @@ client.on('interactionCreate', async interaction => {
                     content: 'Channel set to music channel',
                     ephemeral: true,
                 });
+                interaction.channel.send({ embeds: [commandsembed] });
             } else {
                 interaction.reply({
                     content: 'you do not have the permission to do that',
