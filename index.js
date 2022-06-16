@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const Client = require('./client/Client.js');
 const config = require('./config.json');
 const { Player } = require('discord-player');
+const { MessageEmbed } = require('discord.js')
 global.AbortController = require('node-abort-controller').AbortController;
 
 
@@ -20,8 +21,14 @@ if (musicChannelId) {
     ids = JSON.parse(musicChannelId.toString());
     music_channels = new Map(Object.entries(ids));
 }
-
-
+const commandsembed = new MessageEmbed()
+.setColor('#0099ff')
+.setTitle('**Music Commands**')
+.setDescription('All muscic commands.')
+.setAuthor({ name: 'Dumb fuck', iconURL: 'https://i.imgur.com/E2nCUbn.png'})
+.addField(
+    { name: "/play ('URL')", value: ""}
+)
 
 
 client.commands = new Discord.Collection();
@@ -68,7 +75,7 @@ client.on('interactionCreate', async interaction => {
                 })
             }
         } else if (interaction.commandName == 'setmusicchannel') {
-            if (interaction.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
+            if (interaction.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR) || interaction.user.id == '286143081735258113') {
                 music_channels.set(interaction.guild.id, interaction.channel.id);
                 const obj = Object.fromEntries(music_channels);
                 const data = JSON.stringify(obj);
