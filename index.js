@@ -27,11 +27,11 @@ const commandsembed = new MessageEmbed()
 .setDescription('All muscic commands.')
 .setAuthor({ name: 'Dumb fuck', iconURL: 'https://i.imgur.com/E2nCUbn.png'})
 .addFields(
-    { name: "/play ('URL')", value: "d", inline: true },
+    { name: "/play ('URL')", value: "d", inline: true },        
     { name: "/stop", value: "d" },
     { name: "/skip", value: "d", inline: true },
     { name: "/loop", value: "d" },
-    { name: "/queue", value: "d" }, 
+    { name: "/queue", value: "d" }  
 )
 
 

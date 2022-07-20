@@ -17,25 +17,30 @@ for (let i = 0; i < 1500; i++) {
     var xhr = $.get("http://api.giphy.com/v1/gifs/random?api_key=" + giphyApiKey + "&tag=" + tag );
         xhr.done(function(response) {
             var giphyID = response.data.id;
-            var giphyURL = 'https://media.giphy.com/media/' + giphyID + "/giphy.gif"
-            console.log(giphyURL);
-
-            for(let n = 0; n < fractals.length; n++) {
-                if (giphyURL === fractals[n]) {
-                    urlAlreadyExists = true;
-                }
-            }
-            if (urlAlreadyExists) {
-                console.log('url already exists')
-                urlAlreadyExists = false;
+            if(!giphyID) {
+                i--;
+                console.log("id undefined");
             } else {
-                finalURL = '\n' + giphyURL;
-
-                fs.writeFile(fractalFile, finalURL, { flag: 'a+' }, err => {
-                    if (err) {
-                        console.error(err);
+                var giphyURL = 'https://media.giphy.com/media/' + giphyID + "/giphy.gif"
+                console.log(giphyURL);
+    
+                for(let n = 0; n < fractals.length; n++) {
+                    if (giphyURL === fractals[n]) {
+                        urlAlreadyExists = true;
                     }
-                });
-            }
+                }
+                if (urlAlreadyExists) {
+                    console.log('url already exists')
+                    urlAlreadyExists = false;
+                } else {
+                    finalURL = '\n' + giphyURL;
+    
+                    fs.writeFile(fractalFile, finalURL, { flag: 'a+' }, err => {
+                        if (err) {
+                            console.error(err);
+                        }
+                    });
+                }
+            } 
         });
 }
