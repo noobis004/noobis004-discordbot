@@ -64,13 +64,13 @@ const showqueue = async (interaction) => {
         return;
     } else {
         const songnames = song_queue.songs;
-        finalqueueeditReply = finalqueueeditReply + songnames[0].title + '\n'
+        finalqueueeditReply = finalqueueeditReply + songnames[0].title + `(${songnamesj[0].length})` + '\n'
 
         if (!songnames[1]) {
             finalsongnames = finalsongnames + 'no songs queued up atm.\n';
         }else {
             for (let i = 1; i < songnames.length; i++) {
-                finalsongnames = finalsongnames + `(${i}) ${songnames[i].title}\n`;
+                finalsongnames = finalsongnames + `(${i}) ${songnames[i].title} (${songnames[i].length})\n`;
             }
         }
         
@@ -81,7 +81,7 @@ const showqueue = async (interaction) => {
        
         await interaction.editReply({
             content: finalqueueeditReply + finalsongnames,
-        }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
+        }).then(m => setTimeout(() => m.delete().catch(() => { }), 15000));
         return;
     }
 }
@@ -273,6 +273,7 @@ module.exports = {
                 title: song_info.videoDetails.title,
                 url: song_info.videoDetails.video_url,
                 thumbnail: song_info.thumbnail_url,
+                length: song_info.videoDetails.video_length,
             };
 
             if (!server_queue) {

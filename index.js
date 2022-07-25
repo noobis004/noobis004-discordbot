@@ -21,18 +21,25 @@ if (musicChannelId) {
     ids = JSON.parse(musicChannelId.toString());
     music_channels = new Map(Object.entries(ids));
 }
+
 const commandsembed = new MessageEmbed()
-.setColor('#0099ff')
-.setTitle('**Music Commands**')
-.setDescription('All muscic commands.')
-.setAuthor({ name: 'Dumb fuck', iconURL: 'https://i.imgur.com/E2nCUbn.png'})
+.setColor(0x0099FF)
+.setTitle('Commands')
+.setAuthor({ name: 'Noobis004', iconURL: 'https://i.imgur.com/E2nCUbn.png' })
+.setDescription('Some description here')
+.setThumbnail('https://i.imgur.com/E2nCUbn.png')
 .addFields(
-    { name: "/play ('URL')", value: "d", inline: true },        
-    { name: "/stop", value: "d" },
-    { name: "/skip", value: "d", inline: true },
-    { name: "/loop", value: "d" },
-    { name: "/queue", value: "d" }  
+    { name: "/play ('URL')", value: 'Some value here', inline: true },
+    { name: "/playnext ('SongID')", value: 'Some value here', inline: true },
+    { name: '\u200B', value: '\u200B' },
+    { name: '/skip', value: 'Some value here', inline: true },
+    { name: '/loop', value: 'Some value here', inline: true },
+    { name: '\u200B', value: '\u200B' },
+    { name: '/queue', value: 'Some value here', inline: true },
+    { name: '/stop', value: 'Some value here', inline: true },
 )
+.setTimestamp()
+.setFooter({ text: 'Made by some dumbass', iconURL: 'https://i.imgur.com/E2nCUbn.png' })
 
 
 client.commands = new Discord.Collection();
