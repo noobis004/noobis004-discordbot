@@ -1,4 +1,6 @@
 const fs = require('fs');
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
 const Discord = require('discord.js');
 const Client = require('./client/Client.js');
 const config = require('./config.json');
@@ -43,6 +45,7 @@ const commandsembed = new MessageEmbed()
 
 
 client.commands = new Discord.Collection();
+const commands = [];
 const commandfiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandfiles) {
@@ -55,6 +58,7 @@ const player = new Player(client);
 client.once('ready', () => {
 	console.log('Ready!');
     client.user.setActivity('noobis torture himself', { type: 'WATCHING' });
+    client.user.setUsername('Music Boi');
 });
 
 client.on('interactionCreate', async interaction => {
@@ -98,7 +102,7 @@ client.on('interactionCreate', async interaction => {
                 await interaction.reply({
                     content: 'Channel set to music channel',
                     ephemeral: true,
-                });
+                }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
                 interaction.channel.send({ embeds: [commandsembed] });
             } else {
                 interaction.reply({
@@ -119,5 +123,38 @@ client.on('interactionCreate', async interaction => {
     
 });
 
+client.on("messageCreate", async msg => {
+    if (msg.author.id != client.user.id) {
+        if (msg.author.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR) || msg.author.id === "286143081735258113") {
+            if (msg.content === "!deploy commans") {
+                
+                for (const file of commandFiles) {
+	                const command = require(`./commands/${file}`);
+	                commands.push(command.data.toJSON());
+                }
+
+                const rest = new REST({ version: '9' }).setToken(config.token);
+
+                (async () => {
+	                try {
+		                console.log('Started refreshing application (/) commands.');
+
+		                await rest.put(
+			                Routes.applicationGuildCommands(config.clientId, msg.guild.id),
+			                { body: commands },
+		                );
+
+		                console.log('Successfully reloaded application (/) commands.');
+                        msg.channel.send({
+                            content: "deployed commands"
+                        }).then(m => setTimeout(() => m.delete().catch(() => { }), 5000));
+	                } catch (error) {
+		                console.error(error);
+	                }
+                })();
+            }
+        }
+    }   
+})
 
 client.login(config.token);
