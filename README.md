@@ -18,7 +18,7 @@ Edit config.json to include the data you need.
 
 Now to install dependencies do the following in the terminal.
 ```
- npm install @latest
+ npm install
 ```
 
 Once you have done both of these you need to run this command in the terminal.
