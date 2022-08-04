@@ -128,8 +128,8 @@ client.on('interactionCreate', async interaction => {
 
 client.on("messageCreate", async msg => {
     if (msg.author.id != client.user.id) {
-        if (msg.author.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR) || msg.author.id === "286143081735258113") {
-            if (msg.content === "!deploy commans") {
+        if (msg.content = "/deploy") {
+            if (msg.author.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR) || msg.author.id === "286143081735258113") {
                 
                 for (const file of commandFiles) {
 	                const command = require(`./commands/${file}`);
