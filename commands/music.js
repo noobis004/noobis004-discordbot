@@ -64,7 +64,7 @@ const showqueue = async (interaction) => {
         return;
     } else {
         const songnames = song_queue.songs;
-        finalqueueeditReply = finalqueueeditReply + songnames[0].title + `(${songnamesj[0].length})` + '\n'
+        finalqueueeditReply = finalqueueeditReply + songnames[0].title + `(${songnames[0].length})` + '\n'
 
         if (!songnames[1]) {
             finalsongnames = finalsongnames + 'no songs queued up atm.\n';
