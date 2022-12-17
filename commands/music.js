@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { GuildMember } = require('discord.js');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, VoiceConnectionStatus } = require('@discordjs/voice');
 const ytdb = require('ytdl-core');
 const play = require('play-dl');
 global.AbortController = require('node-abort-controller').AbortController;
@@ -362,6 +362,13 @@ const song_Player = async (guild, song, audioplayer, interaction, connection) =>
         });
         song_queue.turnonlookforidle = false;
     }
+    connection.on(VoiceConnectionStatus.Disconnected, () => {
+        connection.destroy();
+        queue.delete(guild.id);
+        console.log('bot disconnected stopping music'); 
+        return
+        })
+
    
     if (song_queue.firstsong) {
         song_queue.firstsong = false;
